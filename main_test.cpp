@@ -1,52 +1,137 @@
-#define CATCH_CONFIG_MAIN
-#include "catch.hpp"
-#include "queue.hpp"
+#pragma once
 
-using namespace strukdat::priority_queue;
-
-TEST_CASE("membuat queue baru", "[case_1]")
+namespace strukdat
 {
-  auto q = new_queue<int>();
-  REQUIRE(sizeof(q) == sizeof(Queue<int>));
-}
 
-TEST_CASE("memasukkan data berdasarkan prioritas", "[case_2]")
-{
-  auto q = new_queue<int>();
-  enqueue(q, create_element(1, 5));
-  REQUIRE(top(q) == 1);
+  namespace priority_queue
+  {
 
-  enqueue(q, create_element(2, 3));
-  REQUIRE(top(q) == 1);
+    /**
+     * @brief Implementasi struct untuk elemen, harus ada isi dan prioritas elemen.
+     */
+    template <typename T>
+    struct Element
+    {
+      T data;
+      int priority;
+      Element *next;
+    };
 
-  enqueue(q, create_element(3, 7));
-  REQUIRE(top(q) == 3);
+    template <typename T>
+    using ElementPtr = Element<T> *;
 
-  enqueue(q, create_element(4, 5));
-  REQUIRE(top(q) == 3);
+    /**
+     * @brief implemetasi struct untuk queue.
+     */
+    template <typename T>
+    struct Queue
+    {
+      ElementPtr<T> head;
+      ElementPtr<T> tail;
+    };
 
-  enqueue(q, create_element(5, 1));
-  REQUIRE(top(q) == 3);
-}
+    /**
+     * @brief membuat queue baru
+     *
+     * @return  queue kosong
+     */
+    template <typename T>
+    Queue<T> new_queue()
+    {
+      Queue<T> Q;
+      Q.head = nullptr;
+      Q.tail = nullptr;
+      return Q;
+    }
 
-TEST_CASE("menghapus data berdasarkan urutan queue", "[case_3]")
-{
-  auto q = new_queue<int>();
-  enqueue(q, create_element(1, 5));
-  enqueue(q, create_element(2, 3));
-  enqueue(q, create_element(3, 7));
-  enqueue(q, create_element(4, 5));
-  enqueue(q, create_element(5, 1));
+    /**
+     * @brief memasukan data sesuai priority elemen.
+     *
+     * @param q         queue yang dipakai.
+     * @param value     isi dari elemen.
+     * @param priority  prioritas elemen yang menentukan urutan.
+     */
+    template <typename T>
+    void enqueue(Queue<T> &q, const T &value, int priority)
+    {
+      ElementPtr<T> pNew = new Element<T>;
+      pNew->data = value;
+      pNew->priority = priority;
+      pNew->next = nullptr;
+      if (q.head == nullptr && q.tail == nullptr)
+      {
+        q.head = pNew;
+        q.tail = pNew;
+      }
+      else
+      {
+        ElementPtr<T> pHelp = q.head;
+        ElementPtr<T> prev = nullptr;
+        while (pNew->priority <= pHelp->priority)
+        {
+          if (pHelp->next == nullptr)
+            break;
+          prev = pHelp;
+          pHelp = pHelp->next;
+        }
+        if (pHelp == q.head && pNew->priority > pHelp->priority)
+        {
+          pNew->next = pHelp;
+          q.head = pNew;
+        }
+        else if (pHelp == q.tail && pNew->priority < pHelp->priority)
+        {
+          pHelp->next = pNew;
+          q.tail = pNew;
+        }
+        else
+        {
+          pNew->next = pHelp;
+          prev->next = pNew;
+        }
+      }
+    }
 
-  dequeue(q);
-  REQUIRE(top(q) == 1);
+    /**
+     * @brief mengembalikan isi dari elemen head.
+     *
+     * @param q   queue yang dipakai.
+     * @return    isi dari elemen head.
+     */
+    template <typename T>
+    T top(const Queue<T> &q)
+    {
+      return q.head->data;
+    }
 
-  dequeue(q);
-  REQUIRE(top(q) == 4);
+    /**
+     * @brief menghapus elemen head queue (First in first out).
+     *
+     * @param q   queue yang dipakai.
+     */
+    template <typename T>
+    void dequeue(Queue<T> &q)
+    {
+      ElementPtr<T> curr;
+      if (q.head == nullptr && q.tail == nullptr)
+      {
+        curr = nullptr;
+      }
+      else if (q.head->next == nullptr)
+      {
+        curr = q.head;
+        q.head = nullptr;
+        q.tail = nullptr;
+      }
+      else
+      {
+        curr = q.head;
+        q.head = q.head->next;
+        curr->next = nullptr;
+      }
+      delete curr;
+    }
 
-  dequeue(q);
-  REQUIRE(top(q) == 2);
+  } // namespace priority_queue
 
-  dequeue(q);
-  REQUIRE(top(q) == 5);
-}
+} // namespace strukdat
