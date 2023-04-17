@@ -1,15 +1,52 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-#include "problem_a.hpp"
+#include "queue.hpp"
 
-TEST_CASE("Factorials are computed with case 1", "[case_1]")
+using namespace strukdat::priority_queue;
+
+TEST_CASE("membuat queue baru", "[case_1]")
 {
-  REQUIRE(factorial(1) == 1);
-  REQUIRE(factorial(2) == 2);
+  auto q = new_queue<int>();
+  REQUIRE(sizeof(q) == sizeof(Queue<int>));
 }
 
-TEST_CASE("Factorials are computed with case 2", "[case_2]")
+TEST_CASE("memasukkan data berdasarkan prioritas", "[case_2]")
 {
-  REQUIRE(factorial(3) == 6);
-  REQUIRE(factorial(10) == 3628800);
+  auto q = new_queue<int>();
+  enqueue(q, create_element(1, 5));
+  REQUIRE(top(q) == 1);
+
+  enqueue(q, create_element(2, 3));
+  REQUIRE(top(q) == 1);
+
+  enqueue(q, create_element(3, 7));
+  REQUIRE(top(q) == 3);
+
+  enqueue(q, create_element(4, 5));
+  REQUIRE(top(q) == 3);
+
+  enqueue(q, create_element(5, 1));
+  REQUIRE(top(q) == 3);
+}
+
+TEST_CASE("menghapus data berdasarkan urutan queue", "[case_3]")
+{
+  auto q = new_queue<int>();
+  enqueue(q, create_element(1, 5));
+  enqueue(q, create_element(2, 3));
+  enqueue(q, create_element(3, 7));
+  enqueue(q, create_element(4, 5));
+  enqueue(q, create_element(5, 1));
+
+  dequeue(q);
+  REQUIRE(top(q) == 1);
+
+  dequeue(q);
+  REQUIRE(top(q) == 4);
+
+  dequeue(q);
+  REQUIRE(top(q) == 2);
+
+  dequeue(q);
+  REQUIRE(top(q) == 5);
 }
