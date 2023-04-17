@@ -1,3 +1,7 @@
+PROBLEMS	:= queue
+
+PROB_HDRS	:= $(patsubst %, %.hpp, $(PROBLEMS))
+
 OUT	:= tugas
 OBJS	:= main.o $(PROB_OBJS)
 SOURCE	:= main.cpp $(PROB_SRCS)
