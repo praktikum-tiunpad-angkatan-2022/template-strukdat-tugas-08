@@ -1,9 +1,3 @@
-PROBLEMS	:= problem_a
-
-PROB_OBJS	:= $(patsubst %, %.o, $(PROBLEMS))
-PROB_SRCS	:= $(patsubst %, %.cpp, $(PROBLEMS))
-PROB_HDRS	:= $(patsubst %, %.hpp, $(PROBLEMS))
-
 OUT	:= tugas
 OBJS	:= main.o $(PROB_OBJS)
 SOURCE	:= main.cpp $(PROB_SRCS)
